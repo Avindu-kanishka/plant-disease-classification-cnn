@@ -1,0 +1,82 @@
+{
+  "dataset": "PlantDoc test split",
+  "evaluated_images": 61,
+  "skipped_images": 0,
+  "accuracy": 0.32786885245901637,
+  "classification_report": {
+    "Tomato___Bacterial_spot": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 9.0
+    },
+    "Tomato___Early_blight": {
+      "precision": 0.2692307692307692,
+      "recall": 0.7777777777777778,
+      "f1-score": 0.4,
+      "support": 9.0
+    },
+    "Tomato___Late_blight": {
+      "precision": 0.2727272727272727,
+      "recall": 0.6,
+      "f1-score": 0.375,
+      "support": 10.0
+    },
+    "Tomato___Leaf_Mold": {
+      "precision": 1.0,
+      "recall": 0.16666666666666666,
+      "f1-score": 0.2857142857142857,
+      "support": 6.0
+    },
+    "Tomato___Septoria_leaf_spot": {
+      "precision": 0.75,
+      "recall": 0.5454545454545454,
+      "f1-score": 0.631578947368421,
+      "support": 11.0
+    },
+    "Tomato___Spider_mites Two-spotted_spider_mite": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 0.0
+    },
+    "Tomato___Target_Spot": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 0.0
+    },
+    "Tomato___Tomato_Yellow_Leaf_Curl_Virus": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 6.0
+    },
+    "Tomato___Tomato_mosaic_virus": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 10.0
+    },
+    "Tomato___healthy": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 0.0
+    },
+    "accuracy": 0.32786885245901637,
+    "macro avg": {
+      "precision": 0.22919580419580415,
+      "recall": 0.20898989898989898,
+      "f1-score": 0.16922932330827067,
+      "support": 61.0
+    },
+    "weighted avg": {
+      "precision": 0.318038518858191,
+      "recall": 0.32786885245901637,
+      "f1-score": 0.2624861333662024,
+      "support": 61.0
+    }
+  },
+  "note": "Exploratory cross-dataset evaluation. PlantDoc labels may not be perfectly equivalent to PlantVillage labels; results are not directly comparable to the original PlantVillage test accuracy."
+}

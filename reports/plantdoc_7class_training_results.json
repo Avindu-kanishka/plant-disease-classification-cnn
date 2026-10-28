@@ -1,0 +1,21 @@
+{
+  "total_images": 620,
+  "training_images": 434,
+  "validation_images": 93,
+  "test_images": 93,
+  "number_of_classes": 7,
+  "class_names": [
+    "Early Blight",
+    "Bacterial Spot",
+    "Late Blight",
+    "Mosaic Virus",
+    "Yellow Leaf Curl Virus",
+    "Leaf Mold",
+    "Septoria Leaf Spot"
+  ],
+  "head_epochs_completed": 10,
+  "fine_tuning_epochs_completed": 10,
+  "best_validation_accuracy": 0.4301075339317322,
+  "best_validation_loss": 1.4706207513809204,
+  "model_path": "D:\\projects\\plant-disease-detection\\models\\plant_disease_mobilenetv2_7class.keras"
+}

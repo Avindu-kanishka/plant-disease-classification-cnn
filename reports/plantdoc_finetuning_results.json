@@ -1,0 +1,8 @@
+{
+  "training_images": 496,
+  "validation_images": 124,
+  "epochs_completed": 10,
+  "best_validation_accuracy": 0.42741936445236206,
+  "best_validation_loss": 1.475023627281189,
+  "model_path": "D:\\projects\\plant-disease-detection\\models\\plant_disease_mobilenetv2_finetuned.keras"
+}

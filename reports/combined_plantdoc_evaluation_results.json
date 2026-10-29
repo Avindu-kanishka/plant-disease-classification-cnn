@@ -1,0 +1,7 @@
+{
+    "model": "Combined MobileNetV2 7-Class",
+    "dataset": "PlantDoc Test",
+    "total_test_images": 61,
+    "accuracy": 0.4098360655737705,
+    "accuracy_percentage": 40.98360655737705
+}

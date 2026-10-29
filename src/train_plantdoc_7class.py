@@ -1,53 +1,111 @@
 ﻿
-from pathlib import Path
 import json
 import numpy as np
+import pandas as pd
 import tensorflow as tf
 
-from sklearn.model_selection import train_test_split
+from pathlib import Path
 from sklearn.utils.class_weight import compute_class_weight
-
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-
-PLANTDOC_TRAIN = Path(
-    r"D:\projects\Plant disease data set\PlantDoc-Dataset-master\train"
+from sklearn.metrics import classification_report, confusion_matrix
+from tensorflow.keras.applications.mobilenet_v2 import (
+    MobileNetV2,
+    preprocess_input
+)
+from tensorflow.keras import layers, models
+from tensorflow.keras.callbacks import (
+    EarlyStopping,
+    ReduceLROnPlateau,
+    ModelCheckpoint
 )
 
-MODEL_PATH = (
-    PROJECT_ROOT / "models" /
-    "plant_disease_mobilenetv2_7class.keras"
-)
+# =====================================================
+# CONFIGURATION
+# =====================================================
 
-RESULTS_PATH = (
-    PROJECT_ROOT / "reports" /
-    "plantdoc_7class_training_results.json"
-)
+PROJECT_DIR = Path(__file__).resolve().parent.parent
 
-SPLIT_PATH = (
-    PROJECT_ROOT / "reports" /
-    "plantdoc_7class_split.json"
-)
+DATA_DIR = PROJECT_DIR / "data" / "processed" / "plantdoc_more_data"
+MODEL_DIR = PROJECT_DIR / "models"
+REPORT_DIR = PROJECT_DIR / "reports"
+FIGURE_DIR = REPORT_DIR / "figures"
 
-IMAGE_SIZE = (160, 160)
-BATCH_SIZE = 16
-HEAD_EPOCHS = 10
-FINE_TUNE_EPOCHS = 15
+TRAIN_CSV = DATA_DIR / "combined_train.csv"
+VAL_CSV = DATA_DIR / "combined_val.csv"
+
+MODEL_PATH = MODEL_DIR / "plant_disease_mobilenetv2_7class.keras"
+
+IMG_SIZE = (160, 160)
+BATCH_SIZE = 32
 SEED = 42
 
-CLASS_MAPPING = {
-    "Tomato Early blight leaf": "Early Blight",
-    "Tomato leaf bacterial spot": "Bacterial Spot",
-    "Tomato leaf late blight": "Late Blight",
-    "Tomato leaf mosaic virus": "Mosaic Virus",
-    "Tomato leaf yellow virus": "Yellow Leaf Curl Virus",
-    "Tomato mold leaf": "Leaf Mold",
-    "Tomato Septoria leaf spot": "Septoria Leaf Spot",
+EPOCHS_HEAD = 10
+EPOCHS_FINE = 15
+
+CLASS_NAMES = [
+    "Tomato___Bacterial_spot",
+    "Tomato___Early_blight",
+    "Tomato___Late_blight",
+    "Tomato___Leaf_Mold",
+    "Tomato___Septoria_leaf_spot",
+    "Tomato___Tomato_mosaic_virus",
+    "Tomato___Tomato_Yellow_Leaf_Curl_Virus"
+]
+
+NUM_CLASSES = len(CLASS_NAMES)
+
+# =====================================================
+# DIRECTORY CREATION
+# =====================================================
+
+MODEL_DIR.mkdir(parents=True, exist_ok=True)
+REPORT_DIR.mkdir(parents=True, exist_ok=True)
+FIGURE_DIR.mkdir(parents=True, exist_ok=True)
+
+tf.keras.utils.set_random_seed(SEED)
+
+# =====================================================
+# LOAD CSV DATA
+# =====================================================
+
+train_df = pd.read_csv(TRAIN_CSV)
+val_df = pd.read_csv(VAL_CSV)
+
+class_to_id = {
+    class_name: index
+    for index, class_name in enumerate(CLASS_NAMES)
 }
 
-IMAGE_EXTENSIONS = {
-    ".jpg", ".jpeg", ".png", ".jfif", ".webp"
+train_df["label_id"] = train_df["label"].map(class_to_id)
+val_df["label_id"] = val_df["label"].map(class_to_id)
+
+if train_df["label_id"].isna().any() or val_df["label_id"].isna().any():
+    raise ValueError("Unknown class labels found in CSV files.")
+
+print("Training images:", len(train_df))
+print("Validation images:", len(val_df))
+print("Number of classes:", NUM_CLASSES)
+
+# =====================================================
+# CLASS WEIGHTS
+# =====================================================
+
+class_weights_array = compute_class_weight(
+    class_weight="balanced",
+    classes=np.arange(NUM_CLASSES),
+    y=train_df["label_id"].values
+)
+
+class_weights = {
+    int(index): float(weight)
+    for index, weight in enumerate(class_weights_array)
 }
 
+print("\nClass weights:")
+print(class_weights)
+
+# =====================================================
+# IMAGE LOADING
+# =====================================================
 
 def load_image(path, label):
     image = tf.io.read_file(path)
@@ -60,19 +118,23 @@ def load_image(path, label):
 
     image.set_shape([None, None, 3])
 
-    image = tf.image.resize(image, IMAGE_SIZE)
+    image = tf.image.resize(image, IMG_SIZE)
+    image = preprocess_input(image)
+
+    label = tf.cast(label, tf.int32)
 
     return image, label
 
 
-def make_dataset(paths, labels, training=False):
-    dataset = tf.data.Dataset.from_tensor_slices(
-        (paths, labels)
-    )
+def create_dataset(dataframe, training=False):
+    paths = dataframe["image_path"].astype(str).values
+    labels = dataframe["label_id"].astype(int).values
+
+    dataset = tf.data.Dataset.from_tensor_slices((paths, labels))
 
     if training:
         dataset = dataset.shuffle(
-            len(paths),
+            buffer_size=len(dataframe),
             seed=SEED,
             reshuffle_each_iteration=True
         )
@@ -83,241 +145,165 @@ def make_dataset(paths, labels, training=False):
     )
 
     dataset = dataset.batch(BATCH_SIZE)
+    dataset = dataset.prefetch(tf.data.AUTOTUNE)
 
-    return dataset.prefetch(tf.data.AUTOTUNE)
+    return dataset
 
 
-def main():
+train_ds = create_dataset(train_df, training=True)
+val_ds = create_dataset(val_df)
 
-    tf.keras.utils.set_random_seed(SEED)
+# =====================================================
+# DATA AUGMENTATION
+# =====================================================
 
-    paths = []
-    labels = []
+data_augmentation = tf.keras.Sequential([
+    layers.RandomFlip("horizontal"),
+    layers.RandomRotation(0.1),
+    layers.RandomZoom(0.1),
+], name="data_augmentation")
 
-    class_names = list(CLASS_MAPPING.values())
+# =====================================================
+# BUILD MOBILE NET V2 MODEL
+# =====================================================
 
-    # Load all 7 classes
-    for class_index, folder_name in enumerate(CLASS_MAPPING):
+base_model = MobileNetV2(
+    weights="imagenet",
+    include_top=False,
+    input_shape=(IMG_SIZE[0], IMG_SIZE[1], 3)
+)
 
-        folder = PLANTDOC_TRAIN / folder_name
+base_model.trainable = False
 
-        if not folder.is_dir():
-            raise FileNotFoundError(folder)
+inputs = layers.Input(shape=(IMG_SIZE[0], IMG_SIZE[1], 3))
 
-        for image_path in folder.rglob("*"):
+x = data_augmentation(inputs)
+x = base_model(x, training=False)
+x = layers.GlobalAveragePooling2D()(x)
+x = layers.Dropout(0.3)(x)
+outputs = layers.Dense(
+    NUM_CLASSES,
+    activation="softmax"
+)(x)
 
-            if (
-                image_path.is_file()
-                and image_path.suffix.lower() in IMAGE_EXTENSIONS
-            ):
-                paths.append(str(image_path))
-                labels.append(class_index)
+model = models.Model(inputs, outputs)
 
-    paths = np.array(paths)
-    labels = np.array(labels, dtype=np.int32)
+model.compile(
+    optimizer=tf.keras.optimizers.Adam(learning_rate=1e-3),
+    loss="sparse_categorical_crossentropy",
+    metrics=["accuracy"]
+)
 
-    if len(paths) == 0:
-        raise RuntimeError("No training images found.")
+model.summary()
 
-    # 70% train, 15% validation, 15% test
-    train_val_paths, test_paths, train_val_labels, test_labels = (
-        train_test_split(
-            paths,
-            labels,
-            test_size=0.15,
-            random_state=SEED,
-            stratify=labels
-        )
-    )
+# =====================================================
+# CALLBACKS
+# =====================================================
 
-    train_paths, val_paths, train_labels, val_labels = (
-        train_test_split(
-            train_val_paths,
-            train_val_labels,
-            test_size=(0.15 / 0.85),
-            random_state=SEED,
-            stratify=train_val_labels
-        )
-    )
-
-    print("\nDataset Summary")
-    print("----------------")
-    print("Total images:", len(paths))
-    print("Training:", len(train_paths))
-    print("Validation:", len(val_paths))
-    print("Testing:", len(test_paths))
-    print("Classes:", len(class_names))
-
-    # Save split information for later evaluation
-    with open(SPLIT_PATH, "w", encoding="utf-8") as f:
-        json.dump({
-            "class_names": class_names,
-            "train_paths": train_paths.tolist(),
-            "validation_paths": val_paths.tolist(),
-            "test_paths": test_paths.tolist(),
-            "test_labels": test_labels.tolist()
-        }, f, indent=2)
-
-    train_ds = make_dataset(
-        train_paths, train_labels, training=True
-    )
-
-    val_ds = make_dataset(val_paths, val_labels)
-
-    # Data augmentation
-    augmentation = tf.keras.Sequential([
-        tf.keras.layers.RandomFlip("horizontal"),
-        tf.keras.layers.RandomRotation(0.1),
-        tf.keras.layers.RandomZoom(0.1),
-    ])
-
-    # Start from ImageNet weights, not previous project models
-    backbone = tf.keras.applications.MobileNetV2(
-        input_shape=(160, 160, 3),
-        include_top=False,
-        weights="imagenet"
-    )
-
-    backbone.trainable = False
-
-    inputs = tf.keras.Input(shape=(160, 160, 3))
-
-    x = augmentation(inputs)
-
-    x = tf.keras.applications.mobilenet_v2.preprocess_input(x)
-
-    x = backbone(x, training=False)
-
-    x = tf.keras.layers.GlobalAveragePooling2D()(x)
-
-    x = tf.keras.layers.Dropout(0.3)(x)
-
-    outputs = tf.keras.layers.Dense(
-        len(class_names),
-        activation="softmax"
-    )(x)
-
-    model = tf.keras.Model(inputs, outputs)
-
-    # Class weights
-    class_ids = np.unique(train_labels)
-
-    weights = compute_class_weight(
-        class_weight="balanced",
-        classes=class_ids,
-        y=train_labels
-    )
-
-    class_weights = {
-        int(class_id): float(weight)
-        for class_id, weight in zip(class_ids, weights)
-    }
-
-    MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
-    RESULTS_PATH.parent.mkdir(parents=True, exist_ok=True)
-
-    checkpoint = tf.keras.callbacks.ModelCheckpoint(
-        str(MODEL_PATH),
-        monitor="val_accuracy",
-        save_best_only=True,
-        mode="max",
-        verbose=1
-    )
-
-    early_stopping = tf.keras.callbacks.EarlyStopping(
+callbacks = [
+    EarlyStopping(
         monitor="val_loss",
         patience=4,
         restore_best_weights=True
-    )
+    ),
 
-    reduce_lr = tf.keras.callbacks.ReduceLROnPlateau(
+    ReduceLROnPlateau(
         monitor="val_loss",
         factor=0.2,
         patience=2,
-        min_lr=1e-7
+        min_lr=1e-7,
+        verbose=1
+    ),
+
+    ModelCheckpoint(
+        filepath=str(MODEL_PATH),
+        monitor="val_accuracy",
+        save_best_only=True,
+        verbose=1
     )
+]
 
-    callbacks = [
-        checkpoint,
-        early_stopping,
-        reduce_lr
-    ]
+# =====================================================
+# PHASE 1: TRAIN CLASSIFICATION HEAD
+# =====================================================
 
-    # Phase 1: Train classification head
-    model.compile(
-        optimizer=tf.keras.optimizers.Adam(learning_rate=1e-3),
-        loss="sparse_categorical_crossentropy",
-        metrics=["accuracy"]
-    )
+print("\n========== PHASE 1: FEATURE EXTRACTION ==========")
 
-    print("\nPhase 1: Training classification head")
+history_head = model.fit(
+    train_ds,
+    validation_data=val_ds,
+    epochs=EPOCHS_HEAD,
+    class_weight=class_weights,
+    callbacks=callbacks
+)
 
-    history_head = model.fit(
-        train_ds,
-        validation_data=val_ds,
-        epochs=HEAD_EPOCHS,
-        class_weight=class_weights,
-        callbacks=callbacks
-    )
+# =====================================================
+# PHASE 2: FINE-TUNING
+# =====================================================
 
-    # Phase 2: Fine-tune last 30 backbone layers
-    print("\nPhase 2: Fine-tuning MobileNetV2")
+print("\n========== PHASE 2: FINE-TUNING ==========")
 
-    backbone.trainable = True
+base_model.trainable = True
 
-    fine_tune_from = len(backbone.layers) - 30
+# Freeze all layers except last 30
+for layer in base_model.layers[:-30]:
+    layer.trainable = False
 
-    for index, layer in enumerate(backbone.layers):
-        layer.trainable = (
-            index >= fine_tune_from
-            and not isinstance(
-                layer,
-                tf.keras.layers.BatchNormalization
-            )
-        )
+# Keep BatchNormalization layers frozen
+for layer in base_model.layers:
+    if isinstance(layer, layers.BatchNormalization):
+        layer.trainable = False
 
-    model.compile(
-        optimizer=tf.keras.optimizers.Adam(learning_rate=1e-5),
-        loss="sparse_categorical_crossentropy",
-        metrics=["accuracy"]
-    )
+model.compile(
+    optimizer=tf.keras.optimizers.Adam(learning_rate=1e-5),
+    loss="sparse_categorical_crossentropy",
+    metrics=["accuracy"]
+)
 
-    history_fine = model.fit(
-        train_ds,
-        validation_data=val_ds,
-        epochs=FINE_TUNE_EPOCHS,
-        class_weight=class_weights,
-        callbacks=callbacks
-    )
+history_fine = model.fit(
+    train_ds,
+    validation_data=val_ds,
+    epochs=EPOCHS_FINE,
+    class_weight=class_weights,
+    callbacks=callbacks
+)
 
-    # Load best saved model
-    best_model = tf.keras.models.load_model(MODEL_PATH)
+# =====================================================
+# EVALUATE BEST VALIDATION CHECKPOINT
+# =====================================================
 
-    val_loss, val_accuracy = best_model.evaluate(
-        val_ds,
-        verbose=0
-    )
+print("\n========== VALIDATION EVALUATION ==========")
 
-    results = {
-        "total_images": int(len(paths)),
-        "training_images": int(len(train_paths)),
-        "validation_images": int(len(val_paths)),
-        "test_images": int(len(test_paths)),
-        "number_of_classes": len(class_names),
-        "class_names": class_names,
-        "head_epochs_completed": len(history_head.history["loss"]),
-        "fine_tuning_epochs_completed": len(history_fine.history["loss"]),
-        "best_validation_accuracy": float(val_accuracy),
-        "best_validation_loss": float(val_loss),
-        "model_path": str(MODEL_PATH)
-    }
+best_model = tf.keras.models.load_model(MODEL_PATH)
 
-    with open(RESULTS_PATH, "w", encoding="utf-8") as f:
-        json.dump(results, f, indent=2)
+val_loss, val_accuracy = best_model.evaluate(val_ds, verbose=1)
 
-    print("\nTraining completed!")
-    print(json.dumps(results, indent=2))
+print(f"Validation loss: {val_loss:.4f}")
+print(f"Validation accuracy: {val_accuracy * 100:.2f}%")
 
+# =====================================================
+# SAVE RESULTS
+# =====================================================
 
-if __name__ == "__main__":
-    main()
+results = {
+    "model": "MobileNetV2",
+    "dataset": "PlantVillage + PlantDoc",
+    "num_classes": NUM_CLASSES,
+    "training_images": int(len(train_df)),
+    "validation_images": int(len(val_df)),
+    "class_weights": class_weights,
+    "validation_loss": float(val_loss),
+    "validation_accuracy": float(val_accuracy),
+    "epochs_head_completed": len(history_head.history["loss"]),
+    "epochs_finetuning_completed": len(history_fine.history["loss"]),
+    "class_names": CLASS_NAMES
+}
+
+results_path = REPORT_DIR / "plantdoc_combined_training_results.json"
+
+with open(results_path, "w") as file:
+    json.dump(results, file, indent=4)
+
+print("\nTraining completed successfully!")
+print("Best model:", MODEL_PATH)
+print("Results:", results_path)

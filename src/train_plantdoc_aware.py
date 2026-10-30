@@ -42,8 +42,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 DATA_DIR = BASE_DIR / "data" / "processed" / "plantdoc_more_data"
 
-TRAIN_CSV = DATA_DIR / "combined_train.csv"
-VAL_CSV = DATA_DIR / "combined_val.csv"
+TRAIN_CSV = DATA_DIR / "combined_train_final.csv"
+VAL_CSV = DATA_DIR / "combined_val_final.csv"
 
 MODEL_DIR = BASE_DIR / "models"
 REPORT_DIR = BASE_DIR / "reports"

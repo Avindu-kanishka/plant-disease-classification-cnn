@@ -1,0 +1,18 @@
+{
+    "experiment": "Experiment 03 - Targeted Class Improvement",
+    "initial_model": "plantdoc_aware_mobilenetv2.keras",
+    "target_classes": [
+        "Tomato___Leaf_Mold",
+        "Tomato___Tomato_mosaic_virus"
+    ],
+    "oversample_factor": 3,
+    "plantdoc_source_weight": 2.0,
+    "plantvillage_source_weight": 1.0,
+    "original_training_images": 11287,
+    "training_images_after_oversampling": 11487,
+    "validation_images": 2822,
+    "best_validation_loss": 0.3086659014225006,
+    "validation_accuracy": 0.9429482817649841,
+    "validation_weighted_accuracy": 0.9040233492851257,
+    "epochs_completed": 8
+}

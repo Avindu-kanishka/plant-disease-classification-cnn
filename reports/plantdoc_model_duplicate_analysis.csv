@@ -1,0 +1,35 @@
+group,path,split
+1,D:\projects\Plant disease data set\PlantDoc-Dataset-master\train\Blueberry leaf\blueberry-leaves-normal-above-and-iron-deficient-below-bgahf8.jpg,NOT_IN_MODEL_CSV
+1,D:\projects\Plant disease data set\PlantDoc-Dataset-master\test\Blueberry leaf\blueberry-leaves-normal-above-and-iron-deficient-below-bgahf8.jpg,NOT_IN_MODEL_CSV
+2,D:\projects\Plant disease data set\PlantDoc-Dataset-master\train\Corn Gray leaf spot\2015070295153021.jpg,NOT_IN_MODEL_CSV
+2,D:\projects\Plant disease data set\PlantDoc-Dataset-master\test\Corn leaf blight\2015070295153021.jpg,NOT_IN_MODEL_CSV
+3,D:\projects\Plant disease data set\PlantDoc-Dataset-master\train\Corn Gray leaf spot\corn-gray-leaf-spot-f4.jpg,NOT_IN_MODEL_CSV
+3,D:\projects\Plant disease data set\PlantDoc-Dataset-master\test\Corn leaf blight\corn-gray-leaf-spot-f4.jpg,NOT_IN_MODEL_CSV
+4,D:\projects\Plant disease data set\PlantDoc-Dataset-master\train\Corn leaf blight\IMG_42231.jpg,NOT_IN_MODEL_CSV
+4,D:\projects\Plant disease data set\PlantDoc-Dataset-master\test\Corn Gray leaf spot\IMG_42231.jpg,NOT_IN_MODEL_CSV
+5,D:\projects\Plant disease data set\PlantDoc-Dataset-master\train\Potato leaf early blight\1421_0.jpeg_itok=FMtmgePj.jpg,NOT_IN_MODEL_CSV
+5,D:\projects\Plant disease data set\PlantDoc-Dataset-master\test\Potato leaf late blight\1421_0.jpeg_itok=FMtmgePj.jpg,NOT_IN_MODEL_CSV
+6,D:\projects\Plant disease data set\PlantDoc-Dataset-master\train\Potato leaf early blight\18028_1.jpg,NOT_IN_MODEL_CSV
+6,D:\projects\Plant disease data set\PlantDoc-Dataset-master\train\Potato leaf late blight\24064_1.jpg,NOT_IN_MODEL_CSV
+7,D:\projects\Plant disease data set\PlantDoc-Dataset-master\train\Potato leaf early blight\5816740026_d42ef24413_Phytophthora-Infestans.jpg,NOT_IN_MODEL_CSV
+7,D:\projects\Plant disease data set\PlantDoc-Dataset-master\test\Potato leaf late blight\5816740026_d42ef24413_Phytophthora-Infestans.jpg,NOT_IN_MODEL_CSV
+8,D:\projects\Plant disease data set\PlantDoc-Dataset-master\train\Potato leaf early blight\early-blight-closeup-NCSU.jpg,NOT_IN_MODEL_CSV
+8,D:\projects\Plant disease data set\PlantDoc-Dataset-master\train\Tomato Early blight leaf\early-blight-closeup-sm.jpg,TRAIN
+9,D:\projects\Plant disease data set\PlantDoc-Dataset-master\train\Potato leaf early blight\irish-blight-symptoms-on-potato-leaves-atmf8b.jpg,NOT_IN_MODEL_CSV
+9,D:\projects\Plant disease data set\PlantDoc-Dataset-master\test\Potato leaf late blight\irish-blight-symptoms-on-potato-leaves-atmf8b.jpg,NOT_IN_MODEL_CSV
+10,D:\projects\Plant disease data set\PlantDoc-Dataset-master\train\Potato leaf late blight\backus-056-potato-blight.jpg,NOT_IN_MODEL_CSV
+10,D:\projects\Plant disease data set\PlantDoc-Dataset-master\test\Potato leaf early blight\backus-056-potato-blight.jpg,NOT_IN_MODEL_CSV
+11,D:\projects\Plant disease data set\PlantDoc-Dataset-master\train\Tomato Early blight leaf\earlyblightpotato.jpg,VALIDATION
+11,D:\projects\Plant disease data set\PlantDoc-Dataset-master\test\Potato leaf early blight\earlyblightpotato.jpg,NOT_IN_MODEL_CSV
+12,D:\projects\Plant disease data set\PlantDoc-Dataset-master\train\Tomato leaf late blight\20150619d.jpg,TRAIN
+12,D:\projects\Plant disease data set\PlantDoc-Dataset-master\train\Tomato leaf late blight\IMG_5360.jpg,VALIDATION
+13,D:\projects\Plant disease data set\PlantDoc-Dataset-master\train\Tomato leaf yellow virus\tomato-yellow-leaf-curl-disease.jpg,TRAIN
+13,D:\projects\Plant disease data set\PlantDoc-Dataset-master\train\Tomato mold leaf\tylc.jpg,TRAIN
+14,D:\projects\Plant disease data set\PlantDoc-Dataset-master\train\Tomato leaf yellow virus\tylcv-seminar-1-638.jpg,VALIDATION
+14,D:\projects\Plant disease data set\PlantDoc-Dataset-master\test\Tomato leaf yellow virus\tylcv-seminar-1-638.jpg,NOT_IN_MODEL_CSV
+15,D:\projects\Plant disease data set\PlantDoc-Dataset-master\train\Tomato Septoria leaf spot\early-blight-septoria-ls-fig-3.jpg,TRAIN
+15,D:\projects\Plant disease data set\PlantDoc-Dataset-master\test\Tomato Septoria leaf spot\early-blight-septoria-ls-fig-3.jpg,NOT_IN_MODEL_CSV
+16,D:\projects\Plant disease data set\PlantDoc-Dataset-master\train\Tomato Septoria leaf spot\gray-leaf-spot.jpg,TRAIN
+16,D:\projects\Plant disease data set\PlantDoc-Dataset-master\train\Tomato Septoria leaf spot\xgray-leaf-spot.jpg.pagespeed.ic.ltF8KfKtQ1.jpg,VALIDATION
+17,D:\projects\Plant disease data set\PlantDoc-Dataset-master\train\Tomato Septoria leaf spot\tomato_V8.jpg,TRAIN
+17,D:\projects\Plant disease data set\PlantDoc-Dataset-master\test\Tomato leaf bacterial spot\tomato_V8.jpg,NOT_IN_MODEL_CSV

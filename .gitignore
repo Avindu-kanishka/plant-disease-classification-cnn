@@ -16,3 +16,10 @@ models/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Local experiment backups and generated inspection images
+reports/misclassified_contact_sheets/
+reports/misclassified_images/
+reports/plantdoc_test_quality_audit_preliminary (1).csv
+src/train_plantdoc_7class_old.py
+src/train_plantdoc_aware_backup.py

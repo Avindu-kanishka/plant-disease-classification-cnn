@@ -1,7 +1,14 @@
 {
     "model": "PlantDoc-Aware MobileNetV2",
     "dataset": "PlantDoc Test",
-    "total_test_images": 61,
-    "accuracy": 0.4262295081967213,
-    "accuracy_percentage": 42.62295081967213
+    "total_test_images": 60,
+    "excluded_images": [
+        "D:\\projects\\Plant disease data set\\PlantDoc-Dataset-master\\test\\Tomato leaf bacterial spot\\tomato_V8.jpg"
+    ],
+    "accuracy": 0.43333333333333335,
+    "accuracy_percentage": 43.333333333333336,
+    "macro_precision": 0.5922902494331065,
+    "macro_recall": 0.4305194805194806,
+    "macro_f1_score": 0.4313624971519708,
+    "weighted_f1_score": 0.4288849016480596
 }

@@ -8,36 +8,37 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 from sklearn.metrics import (
     accuracy_score,
     classification_report,
-    confusion_matrix
+    confusion_matrix,
 )
-from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 
 
 # =====================================================
-# 1. PATHS
+# 1. PATH CONFIGURATION
 # =====================================================
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+PROJECT_DIR = Path(__file__).resolve().parent.parent
 
 MODEL_PATH = (
-    BASE_DIR / "models" / "plantdoc_aware_mobilenetv2.keras"
+    PROJECT_DIR / "models" / "plantdoc_aware_mobilenetv2.keras"
 )
 
 TEST_DIR = Path(
     r"D:\projects\Plant disease data set\PlantDoc-Dataset-master\test"
 )
 
-REPORT_DIR = BASE_DIR / "reports"
+REPORT_DIR = PROJECT_DIR / "reports"
 FIGURE_DIR = REPORT_DIR / "figures"
 
+REPORT_DIR.mkdir(parents=True, exist_ok=True)
 FIGURE_DIR.mkdir(parents=True, exist_ok=True)
 
 
 # =====================================================
-# 2. CLASS DEFINITIONS
+# 2. CLASS NAMES
 # =====================================================
 
 CLASS_NAMES = [
@@ -47,37 +48,48 @@ CLASS_NAMES = [
     "Tomato___Leaf_Mold",
     "Tomato___Septoria_leaf_spot",
     "Tomato___Tomato_mosaic_virus",
-    "Tomato___Tomato_Yellow_Leaf_Curl_Virus"
+    "Tomato___Tomato_Yellow_Leaf_Curl_Virus",
 ]
-
+# =====================================================
+# 3. PLANTDOC CLASS MAPPING
+# =====================================================
 
 CLASS_MAPPING = {
-    "Tomato leaf bacterial spot": "Tomato___Bacterial_spot",
     "Tomato Early blight leaf": "Tomato___Early_blight",
+    "Tomato leaf bacterial spot": "Tomato___Bacterial_spot",
     "Tomato leaf late blight": "Tomato___Late_blight",
+    "Tomato leaf mosaic virus": "Tomato___Tomato_mosaic_virus",
+    "Tomato leaf yellow virus": "Tomato___Tomato_Yellow_Leaf_Curl_Virus",
     "Tomato mold leaf": "Tomato___Leaf_Mold",
     "Tomato Septoria leaf spot": "Tomato___Septoria_leaf_spot",
-    "Tomato leaf mosaic virus": "Tomato___Tomato_mosaic_virus",
-    "Tomato leaf yellow virus": "Tomato___Tomato_Yellow_Leaf_Curl_Virus"
 }
 
 
 # =====================================================
-# 3. CHECK PATHS
+# 4. CHECK PATHS
 # =====================================================
+
+print("\nChecking project paths...")
 
 if not MODEL_PATH.exists():
-    raise FileNotFoundError(f"Model not found: {MODEL_PATH}")
+    raise FileNotFoundError(
+        f"Model not found: {MODEL_PATH}"
+    )
 
 if not TEST_DIR.exists():
-    raise FileNotFoundError(f"Test dataset not found: {TEST_DIR}")
+    raise FileNotFoundError(
+        f"PlantDoc test directory not found: {TEST_DIR}"
+    )
+
+print("Model path:", MODEL_PATH)
+print("Test directory:", TEST_DIR)
 
 
 # =====================================================
-# 4. LOAD MODEL
+# 5. LOAD MODEL
 # =====================================================
 
-print("\nLoading PlantDoc-aware MobileNetV2 model...")
+print("\nLoading PlantDoc-aware model...")
 
 model = tf.keras.models.load_model(MODEL_PATH)
 
@@ -85,12 +97,14 @@ print("Model loaded successfully!")
 
 
 # =====================================================
-# 5. LOAD TEST IMAGES
+# 6. LOAD PLANTDOC TEST IMAGES
 # =====================================================
 
 images = []
 true_labels = []
 image_paths = []
+
+excluded_images = []
 
 print("\nLoading PlantDoc test images...")
 
@@ -102,11 +116,17 @@ for folder_name, class_name in CLASS_MAPPING.items():
         print(f"Warning: Folder not found: {folder_path}")
         continue
 
-    for image_path in folder_path.iterdir():
+    for image_path in sorted(folder_path.iterdir()):
 
         if image_path.suffix.lower() not in [
             ".jpg", ".jpeg", ".png", ".webp", ".jfif"
         ]:
+            continue
+
+        # Exclude the known conflicting duplicate image
+        if image_path.name.lower() == "tomato_v8.jpg":
+            print(f"Excluding known conflicting image: {image_path}")
+            excluded_images.append(str(image_path))
             continue
 
         try:
@@ -127,28 +147,35 @@ for folder_name, class_name in CLASS_MAPPING.items():
 
 
 if len(images) == 0:
-    raise ValueError("No test images were loaded. Check dataset folders.")
+    raise ValueError(
+        "No test images were loaded. Check dataset folders."
+    )
 
 
-X_test = np.array(images)
+X_test = np.array(images, dtype=np.float32)
 y_true = np.array(true_labels)
 
 print("\nTotal test images:", len(X_test))
+print("Excluded images:", len(excluded_images))
 
 
 # =====================================================
-# 6. MODEL PREDICTIONS
+# 7. MODEL PREDICTIONS
 # =====================================================
 
 print("\nGenerating predictions...")
 
-predictions = model.predict(X_test, verbose=1)
+predictions = model.predict(
+    X_test,
+    batch_size=16,
+    verbose=1
+)
 
 y_pred = np.argmax(predictions, axis=1)
 
 
 # =====================================================
-# 7. EVALUATION METRICS
+# 8. EVALUATION METRICS
 # =====================================================
 
 accuracy = accuracy_score(y_true, y_pred)
@@ -156,6 +183,16 @@ accuracy = accuracy_score(y_true, y_pred)
 print("\n========== PLANTDOC-AWARE TEST RESULTS ==========")
 print(f"Accuracy: {accuracy * 100:.2f}%")
 
+report_text = classification_report(
+    y_true,
+    y_pred,
+    labels=list(range(len(CLASS_NAMES))),
+    target_names=CLASS_NAMES,
+    zero_division=0
+)
+
+print("\nClassification Report:\n")
+print(report_text)
 
 report = classification_report(
     y_true,
@@ -166,19 +203,9 @@ report = classification_report(
     zero_division=0
 )
 
-print("\nClassification Report:")
-
-print(classification_report(
-    y_true,
-    y_pred,
-    labels=list(range(len(CLASS_NAMES))),
-    target_names=CLASS_NAMES,
-    zero_division=0
-))
-
 
 # =====================================================
-# 8. SAVE CLASSIFICATION REPORT
+# 9. SAVE CLASSIFICATION REPORT
 # =====================================================
 
 report_path = (
@@ -191,7 +218,7 @@ print("\nClassification report saved:", report_path)
 
 
 # =====================================================
-# 9. CONFUSION MATRIX
+# 10. CONFUSION MATRIX
 # =====================================================
 
 cm = confusion_matrix(
@@ -223,6 +250,8 @@ plt.yticks(rotation=0)
 
 plt.tight_layout()
 
+FIGURE_DIR.mkdir(parents=True, exist_ok=True)
+
 cm_path = (
     FIGURE_DIR / "plantdoc_aware_confusion_matrix.png"
 )
@@ -234,29 +263,52 @@ print("Confusion matrix saved:", cm_path)
 
 
 # =====================================================
-# 10. SAVE EVALUATION RESULTS
+# 11. SAVE EVALUATION RESULTS
 # =====================================================
 
 results = {
     "model": "PlantDoc-Aware MobileNetV2",
     "dataset": "PlantDoc Test",
     "total_test_images": int(len(X_test)),
+    "excluded_images": excluded_images,
     "accuracy": float(accuracy),
-    "accuracy_percentage": float(accuracy * 100)
+    "accuracy_percentage": float(accuracy * 100),
+    "macro_precision": float(
+        report["macro avg"]["precision"]
+    ),
+    "macro_recall": float(
+        report["macro avg"]["recall"]
+    ),
+    "macro_f1_score": float(
+        report["macro avg"]["f1-score"]
+    ),
+    "weighted_f1_score": float(
+        report["weighted avg"]["f1-score"]
+    ),
 }
 
 results_path = (
     REPORT_DIR / "plantdoc_aware_evaluation_results.json"
 )
 
-with open(results_path, "w") as f:
+with open(results_path, "w", encoding="utf-8") as f:
     json.dump(results, f, indent=4)
 
+
+# =====================================================
+# 12. FINAL SUMMARY
+# =====================================================
 
 print("\n========================================")
 print("PLANTDOC-AWARE EVALUATION COMPLETED!")
 print("========================================")
 
+print(f"Total test images : {len(X_test)}")
+print(f"Accuracy          : {accuracy * 100:.2f}%")
+print(f"Macro F1-score    : {results['macro_f1_score']:.4f}")
+print(f"Weighted F1-score : {results['weighted_f1_score']:.4f}")
+
+print("\nSaved files:")
 print("Classification report:", report_path)
 print("Confusion matrix:", cm_path)
 print("Evaluation results:", results_path)

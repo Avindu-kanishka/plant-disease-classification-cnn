@@ -1,0 +1,5 @@
+split,source,image_count
+train,PlantDoc,474
+train,PlantVillage,10803
+validation,PlantDoc,137
+validation,PlantVillage,2681

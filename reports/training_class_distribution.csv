@@ -1,0 +1,15 @@
+split,label,image_count
+train,Tomato___Bacterial_spot,1782
+train,Tomato___Early_blight,862
+train,Tomato___Late_blight,1603
+train,Tomato___Leaf_Mold,829
+train,Tomato___Septoria_leaf_spot,1527
+train,Tomato___Tomato_Yellow_Leaf_Curl_Virus,4340
+train,Tomato___Tomato_mosaic_virus,334
+validation,Tomato___Bacterial_spot,446
+validation,Tomato___Early_blight,215
+validation,Tomato___Late_blight,401
+validation,Tomato___Leaf_Mold,207
+validation,Tomato___Septoria_leaf_spot,381
+validation,Tomato___Tomato_Yellow_Leaf_Curl_Virus,1085
+validation,Tomato___Tomato_mosaic_virus,83

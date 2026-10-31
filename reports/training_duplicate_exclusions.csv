@@ -1,0 +1,4 @@
+image_path,label,source
+D:\projects\plant-disease-detection\data\raw\tensorflow_datasets\downloads\extracted\ZIP.data.mend.com_publ-file_data_tywb_file_d565-c1rDQyRTmE0CqGGXmH53WlQp0NWefMfDW89aj1A0m5D_A\Plant_leave_diseases_dataset_without_augmentation\Tomato___Late_blight\image (1400).jpg,Tomato___Late_blight,PlantVillage
+D:\projects\plant-disease-detection\data\raw\tensorflow_datasets\downloads\extracted\ZIP.data.mend.com_publ-file_data_tywb_file_d565-c1rDQyRTmE0CqGGXmH53WlQp0NWefMfDW89aj1A0m5D_A\Plant_leave_diseases_dataset_without_augmentation\Tomato___Late_blight\image (1748).JPG,Tomato___Late_blight,PlantVillage
+D:\projects\plant-disease-detection\data\raw\tensorflow_datasets\downloads\extracted\ZIP.data.mend.com_publ-file_data_tywb_file_d565-c1rDQyRTmE0CqGGXmH53WlQp0NWefMfDW89aj1A0m5D_A\Plant_leave_diseases_dataset_without_augmentation\Tomato___Late_blight\image (1578).JPG,Tomato___Late_blight,PlantVillage

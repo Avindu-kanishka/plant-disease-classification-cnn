@@ -1,0 +1,9 @@
+metric,value
+training_images,11277
+validation_images,2818
+total_images,14095
+missing_images,0
+unreadable_images,0
+exact_duplicate_rows,6
+cross_split_duplicate_groups,0
+readable_images,14095

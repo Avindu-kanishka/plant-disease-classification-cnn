@@ -1,0 +1,4 @@
+image_name,actual_class,decision,reason,exact_duplicate_in_train_val
+%2320+Bacterial+Spot+and+Speck.jpg,Tomato___Bacterial_spot,Exclude candidate,Educational slide with text and multiple images,False
+page_2.jpg,Tomato___Tomato_mosaic_virus,Exclude candidate,Mixed tomato and cucumber educational composite,False
+tylcv-seminar-1-638.jpg,Tomato___Tomato_Yellow_Leaf_Curl_Virus,Exclude candidate,Research presentation slide rather than a single leaf image,False

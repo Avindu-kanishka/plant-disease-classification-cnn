@@ -15,7 +15,7 @@ from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent
 
-MODEL_PATH = PROJECT_DIR / "models" / "plantdoc_aware_mobilenetv2.keras"
+MODEL_PATH = PROJECT_DIR / "models" / "backup_before_deduplicated_training" / "plantdoc_aware_mobilenetv2.keras"
 
 TEST_DIR = Path(
     r"D:\projects\Plant disease data set\PlantDoc-Dataset-master\test"
@@ -95,7 +95,7 @@ for folder_name, class_name in CLASS_MAPPING.items():
             continue
 
         # Exclude known conflicting image
-        if image_path.name.lower() == "tomato_v8.jpg":
+        if image_path.name.lower() in {"tomato_v8.jpg", "tomato-mosaic-1wdr2jx-300x225.jpg"}:
             continue
 
         try:

@@ -1,0 +1,18 @@
+{
+    "model": "PlantDoc-Aware MobileNetV2",
+    "dataset": "PlantDoc Test - Secondary 56-image sensitivity analysis",
+    "total_test_images": 56,
+    "excluded_images": [
+        "D:\\projects\\Plant disease data set\\PlantDoc-Dataset-master\\test\\Tomato leaf bacterial spot\\%2320+Bacterial+Spot+and+Speck.jpg",
+        "D:\\projects\\Plant disease data set\\PlantDoc-Dataset-master\\test\\Tomato leaf bacterial spot\\tomato_V8.jpg",
+        "D:\\projects\\Plant disease data set\\PlantDoc-Dataset-master\\test\\Tomato leaf mosaic virus\\page_2.jpg",
+        "D:\\projects\\Plant disease data set\\PlantDoc-Dataset-master\\test\\Tomato leaf mosaic virus\\Tomato-Mosaic-1wdr2jx-300x225.jpg",
+        "D:\\projects\\Plant disease data set\\PlantDoc-Dataset-master\\test\\Tomato leaf yellow virus\\tylcv-seminar-1-638.jpg"
+    ],
+    "accuracy": 0.4642857142857143,
+    "accuracy_percentage": 46.42857142857143,
+    "macro_precision": 0.6230755460078768,
+    "macro_recall": 0.45347866419294997,
+    "macro_f1_score": 0.4629678852787334,
+    "weighted_f1_score": 0.46713320839527583
+}

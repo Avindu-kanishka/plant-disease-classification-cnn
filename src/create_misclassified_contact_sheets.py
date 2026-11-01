@@ -7,11 +7,16 @@ from PIL import Image
 PROJECT_DIR = Path(__file__).resolve().parent.parent
 
 INPUT_DIR = PROJECT_DIR / "reports" / "misclassified_images"
-OUTPUT_DIR = PROJECT_DIR / "reports" / "misclassified_contact_sheets"
+OUTPUT_DIR = PROJECT_DIR / "reports" / "misclassified_contact_sheets_59"
 
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".jfif"}
+
+if not INPUT_DIR.exists():
+    raise FileNotFoundError(f"Input directory not found: {INPUT_DIR}")
+
+saved_count = 0
 
 for class_folder in sorted(INPUT_DIR.iterdir()):
 
@@ -20,35 +25,41 @@ for class_folder in sorted(INPUT_DIR.iterdir()):
 
     image_paths = sorted(
         p for p in class_folder.iterdir()
-        if p.suffix.lower() in IMAGE_EXTENSIONS
+        if p.is_file() and p.suffix.lower() in IMAGE_EXTENSIONS
     )
 
     if not image_paths:
+        print(f"Skipped (no images): {class_folder.name}")
         continue
 
     columns = 3
     rows = math.ceil(len(image_paths) / columns)
 
     fig, axes = plt.subplots(
-        rows, columns,
-        figsize=(15, rows * 4.5)
+        rows,
+        columns,
+        figsize=(15, rows * 4.5),
+        squeeze=False
     )
 
-    axes = list(axes.flat) if hasattr(axes, "flat") else [axes]
+    axes = axes.flatten()
 
     for ax, image_path in zip(axes, image_paths):
-
         try:
-            image = Image.open(image_path).convert("RGB")
+            with Image.open(image_path) as img:
+                image = img.convert("RGB")
+
             ax.imshow(image)
             ax.axis("off")
 
-            # Filename format:
-            # 001__PRED-Late_blight__CONF-0.678__image.jpg
             parts = image_path.name.split("__")
 
-            predicted = parts[1].replace("PRED-", "")
-            confidence = parts[2].replace("CONF-", "")
+            predicted = "Unknown"
+            confidence = "Unknown"
+
+            if len(parts) >= 3:
+                predicted = parts[1].replace("PRED-", "")
+                confidence = parts[2].replace("CONF-", "")
 
             ax.set_title(
                 f"Predicted: {predicted}\nConfidence: {confidence}",
@@ -56,7 +67,7 @@ for class_folder in sorted(INPUT_DIR.iterdir()):
             )
 
         except Exception as error:
-            ax.set_title(f"Error: {error}")
+            ax.set_title(f"Image error: {error}", fontsize=8)
             ax.axis("off")
 
     for ax in axes[len(image_paths):]:
@@ -68,14 +79,20 @@ for class_folder in sorted(INPUT_DIR.iterdir()):
         fontweight="bold"
     )
 
-    plt.tight_layout()
+    fig.tight_layout()
 
-    output_path = OUTPUT_DIR / f"{class_folder.name}.png"
+    safe_name = class_folder.name.replace("_", "-")
+    output_path = OUTPUT_DIR / f"{safe_name}_contact_sheet.png"
 
-    plt.savefig(output_path, dpi=150, bbox_inches="tight")
-    plt.close()
+    try:
+        fig.savefig(output_path, dpi=150, bbox_inches="tight")
+        saved_count += 1
+        print(f"Saved: {output_path}")
+    finally:
+        plt.close(fig)
 
-    print("Saved:", output_path)
-
-print("\nContact sheet generation completed!")
-print("Output folder:", OUTPUT_DIR)
+print("\n========================================")
+print("CONTACT SHEET GENERATION COMPLETED")
+print("========================================")
+print(f"Contact sheets saved: {saved_count}")
+print(f"Output folder: {OUTPUT_DIR}")

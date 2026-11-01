@@ -124,7 +124,7 @@ for folder_name, class_name in CLASS_MAPPING.items():
             continue
 
         # Exclude the known conflicting duplicate image
-        if image_path.name.lower() == "tomato_v8.jpg":
+        if image_path.name.lower() in {"tomato_v8.jpg", "tomato-mosaic-1wdr2jx-300x225.jpg"}:
             print(f"Excluding known conflicting image: {image_path}")
             excluded_images.append(str(image_path))
             continue

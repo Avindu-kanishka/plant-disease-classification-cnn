@@ -1,0 +1,15 @@
+{
+    "model": "PlantDoc-Aware MobileNetV2",
+    "dataset": "PlantDoc Test",
+    "total_test_images": 59,
+    "excluded_images": [
+        "D:\\projects\\Plant disease data set\\PlantDoc-Dataset-master\\test\\Tomato leaf bacterial spot\\tomato_V8.jpg",
+        "D:\\projects\\Plant disease data set\\PlantDoc-Dataset-master\\test\\Tomato leaf mosaic virus\\Tomato-Mosaic-1wdr2jx-300x225.jpg"
+    ],
+    "accuracy": 0.4406779661016949,
+    "accuracy_percentage": 44.06779661016949,
+    "macro_precision": 0.44213347220866017,
+    "macro_recall": 0.43715728715728713,
+    "macro_f1_score": 0.4190604977623233,
+    "weighted_f1_score": 0.41902491758441157
+}

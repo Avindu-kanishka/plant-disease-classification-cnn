@@ -1,0 +1,42 @@
+{
+    "experiment": "Experiment 02 - PlantDoc-Aware MobileNetV2",
+    "initial_weights": "ImageNet",
+    "classes": [
+        "Tomato___Bacterial_spot",
+        "Tomato___Early_blight",
+        "Tomato___Late_blight",
+        "Tomato___Leaf_Mold",
+        "Tomato___Septoria_leaf_spot",
+        "Tomato___Tomato_mosaic_virus",
+        "Tomato___Tomato_Yellow_Leaf_Curl_Virus"
+    ],
+    "image_size": [
+        160,
+        160
+    ],
+    "batch_size": 32,
+    "plantdoc_source_weight": 3.0,
+    "plantvillage_source_weight": 1.0,
+    "training_images": 11287,
+    "validation_images": 2822,
+    "training_source_distribution": {
+        "PlantVillage": 10808,
+        "PlantDoc": 479
+    },
+    "validation_source_distribution": {
+        "PlantVillage": 2681,
+        "PlantDoc": 141
+    },
+    "class_weights": {
+        "0": 0.7790714187645978,
+        "1": 1.1195041915955184,
+        "2": 0.820140199686845,
+        "3": 1.1415424752927605,
+        "4": 0.8410607752136418,
+        "5": 1.7995250163434628,
+        "6": 0.49915592310317264
+    },
+    "best_validation_loss": 0.40043213963508606,
+    "validation_accuracy": 0.9408221244812012,
+    "validation_weighted_accuracy": 0.8778337240219116
+}

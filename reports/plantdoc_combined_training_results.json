@@ -1,0 +1,29 @@
+{
+    "model": "MobileNetV2",
+    "dataset": "PlantVillage + PlantDoc",
+    "num_classes": 7,
+    "training_images": 11287,
+    "validation_images": 2822,
+    "class_weights": {
+        "0": 0.9048420715087382,
+        "1": 1.8683992716437676,
+        "2": 1.0027540867093105,
+        "3": 1.9426850258175559,
+        "4": 1.054564140895076,
+        "5": 4.827630453378957,
+        "6": 0.37144173495244676
+    },
+    "validation_loss": 0.1984333097934723,
+    "validation_accuracy": 0.9358611106872559,
+    "epochs_head_completed": 10,
+    "epochs_finetuning_completed": 15,
+    "class_names": [
+        "Tomato___Bacterial_spot",
+        "Tomato___Early_blight",
+        "Tomato___Late_blight",
+        "Tomato___Leaf_Mold",
+        "Tomato___Septoria_leaf_spot",
+        "Tomato___Tomato_mosaic_virus",
+        "Tomato___Tomato_Yellow_Leaf_Curl_Virus"
+    ]
+}

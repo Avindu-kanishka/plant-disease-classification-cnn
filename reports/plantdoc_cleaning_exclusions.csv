@@ -1,0 +1,10 @@
+split,image_path,label,source,reason
+train,D:\projects\Plant disease data set\PlantDoc-Dataset-master\train\Tomato leaf yellow virus\tomato-yellow-leaf-curl-disease.jpg,Tomato___Tomato_Yellow_Leaf_Curl_Virus,PlantDoc,"Exact duplicate, cross-species ambiguity, or split leakage"
+train,D:\projects\Plant disease data set\PlantDoc-Dataset-master\train\Tomato Septoria leaf spot\early-blight-septoria-ls-fig-3.jpg,Tomato___Septoria_leaf_spot,PlantDoc,"Exact duplicate, cross-species ambiguity, or split leakage"
+train,D:\projects\Plant disease data set\PlantDoc-Dataset-master\train\Tomato mold leaf\tylc.jpg,Tomato___Leaf_Mold,PlantDoc,"Exact duplicate, cross-species ambiguity, or split leakage"
+train,D:\projects\Plant disease data set\PlantDoc-Dataset-master\train\Tomato Early blight leaf\early-blight-closeup-sm.jpg,Tomato___Early_blight,PlantDoc,"Exact duplicate, cross-species ambiguity, or split leakage"
+train,D:\projects\Plant disease data set\PlantDoc-Dataset-master\train\Tomato Septoria leaf spot\tomato_V8.jpg,Tomato___Septoria_leaf_spot,PlantDoc,"Exact duplicate, cross-species ambiguity, or split leakage"
+validation,D:\projects\Plant disease data set\PlantDoc-Dataset-master\train\Tomato Early blight leaf\earlyblightpotato.jpg,Tomato___Early_blight,PlantDoc,"Exact duplicate, cross-species ambiguity, or split leakage"
+validation,D:\projects\Plant disease data set\PlantDoc-Dataset-master\train\Tomato Septoria leaf spot\xgray-leaf-spot.jpg.pagespeed.ic.ltF8KfKtQ1.jpg,Tomato___Septoria_leaf_spot,PlantDoc,"Exact duplicate, cross-species ambiguity, or split leakage"
+validation,D:\projects\Plant disease data set\PlantDoc-Dataset-master\train\Tomato leaf late blight\IMG_5360.jpg,Tomato___Late_blight,PlantDoc,"Exact duplicate, cross-species ambiguity, or split leakage"
+validation,D:\projects\Plant disease data set\PlantDoc-Dataset-master\train\Tomato leaf yellow virus\tylcv-seminar-1-638.jpg,Tomato___Tomato_Yellow_Leaf_Curl_Virus,PlantDoc,"Exact duplicate, cross-species ambiguity, or split leakage"

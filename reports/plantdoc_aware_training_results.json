@@ -17,26 +17,26 @@
     "batch_size": 32,
     "plantdoc_source_weight": 3.0,
     "plantvillage_source_weight": 1.0,
-    "training_images": 11287,
-    "validation_images": 2822,
+    "training_images": 11277,
+    "validation_images": 2818,
     "training_source_distribution": {
-        "PlantVillage": 10808,
-        "PlantDoc": 479
+        "PlantVillage": 10803,
+        "PlantDoc": 474
     },
     "validation_source_distribution": {
         "PlantVillage": 2681,
-        "PlantDoc": 141
+        "PlantDoc": 137
     },
     "class_weights": {
-        "0": 0.7790714187645978,
-        "1": 1.1195041915955184,
-        "2": 0.820140199686845,
-        "3": 1.1415424752927605,
-        "4": 0.8410607752136418,
-        "5": 1.7995250163434628,
-        "6": 0.49915592310317264
+        "0": 0.7787128031490819,
+        "1": 1.1196377481591804,
+        "2": 0.8210401662749369,
+        "3": 1.14170499142027,
+        "4": 0.8412239844023082,
+        "5": 1.7986966740941788,
+        "6": 0.4989836325000433
     },
-    "best_validation_loss": 0.40043213963508606,
-    "validation_accuracy": 0.9408221244812012,
-    "validation_weighted_accuracy": 0.8778337240219116
+    "best_validation_loss": 0.44526588916778564,
+    "validation_accuracy": 0.9244144558906555,
+    "validation_weighted_accuracy": 0.8558529019355774
 }

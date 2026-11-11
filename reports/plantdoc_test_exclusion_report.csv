@@ -1,0 +1,2 @@
+image_path,label,action,reason
+D:\projects\Plant disease data set\PlantDoc-Dataset-master\test\Tomato leaf bacterial spot\tomato_V8.jpg,Tomato leaf bacterial spot,EXCLUDE,Exact duplicate of training image labelled Septoria
